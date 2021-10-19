@@ -57,3 +57,71 @@ class OrionXExchange(ExchangeService):
         except Exception as err:
             logging.error(err)
             return None
+
+    async def get_open_orders_by_market(
+        self, market: str, session: aiohttp.ClientSession
+    ):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.get_open_orders(session=session)
+            logging.info(response)
+
+            if "data" in response:
+                ids = {
+                    order["_id"]: order["market"]["code"]
+                    for order in response["data"]["orders"]["items"]
+                    if order["market"]["code"] == market.replace("/", "")
+                }
+                logging.info(f"OPEN ORDERS in {market}: {ids}")
+                return ids
+            return []
+        except Exception as err:
+            logging.debug(err)
+            raise err
+
+    async def close_orders(self, order_ids: List[str]):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.close_orders(order_ids=order_ids, session=session)
+            logging.info(response)
+            return response
+        except Exception as err:
+            logging.debug(err)
+            raise err
+
+    async def close_orders_by_market(self, market: str):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.close_orders_by_market(market=market, session=session)
+            logging.info(response)
+        except Exception as err:
+            logging.debug(err)
+            raise err
+
+    async def get_order_status(self, order_id: str):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.get_order_status(order_id=order_id, session=session)
+            logging.info(response)
+        except Exception as err:
+            logging.debug(err)
+            raise err
+        except Exception as err:
+            logging.debug(err)
+            raise Exception("Could not get Order Status")
+
+    async def new_position(
+        self,
+        market_code: str,
+        amount: float,
+        limit_price: float,
+        selling: str,
+    ):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.new_position(market_code=market_code, amount=amount, limit_price=limit_price, selling=selling, session=session)
+                logging.info(response)
+            return response
+        except Exception as err:
+            logging.debug(err)
+            return False
