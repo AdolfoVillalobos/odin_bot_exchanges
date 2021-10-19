@@ -1,15 +1,31 @@
+import pydantic
+import logging
+import time
+
+
+from datetime import datetime
+from typing import List
+
+import odin_bot_exchanges.orionx.currencies as currencies
+
+from odin_bot_entities.trades import Transaction, Order
+from odin_bot_entities.balances import Wallet
+
+from odin_bot_exchanges.responses import AbstractResponseParser
+
+
 class BinanceTransactionResponseParser(AbstractResponseParser):
     def parse_response(
-        self, message: EntityMessage, response: dict
+        self, order_id: str, market_code: str, response: dict
     ) -> List[Transaction]:
         try:
-            currency_name, pair_currency_name = message.market.split("/")
+            currency_name, pair_currency_name = market_code.split("/")
             transaction_data = [
                 {
-                    "id": message.id,
+                    "id": order_id,
                     "currency_name": currency_name,
                     "pair_currency_name": pair_currency_name,
-                    "market": message.market,
+                    "market": market_code,
                     "time": currency["time"],
                     "exchange": "binance",
                     "type": "b",
@@ -26,7 +42,7 @@ class BinanceTransactionResponseParser(AbstractResponseParser):
             return transactions
         except Exception as err:
             logging.debug(err)
-            raise ParserError("Binance Parser: Could not parse Transaction")
+            raise Exception("Binance Parser: Could not parse Transaction")
 
 
 class BinanceWalletResponseParser(AbstractResponseParser):
@@ -51,4 +67,4 @@ class BinanceWalletResponseParser(AbstractResponseParser):
             return wallet
         except Exception as err:
             logging.debug(err)
-            raise ParserError("Binance Parser: Could not parse Wallet")
+            raise Exception("Binance Parser: Could not parse Wallet")
