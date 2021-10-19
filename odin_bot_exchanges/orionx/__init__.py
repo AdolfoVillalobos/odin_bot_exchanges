@@ -58,23 +58,22 @@ class OrionXExchange(ExchangeService):
             logging.error(err)
             return None
 
-    async def get_open_orders_by_market(
-        self, market: str, session: aiohttp.ClientSession
-    ):
+    async def get_open_orders(self):
         try:
             async with aiohttp.ClientSession() as session:
-                response = await self.client.get_open_orders(session=session)
+                response = await self.client.get_opern_orders(session=session)
             logging.info(response)
+            return response
+        except Exception as err:
+            logging.debug(err)
+            raise err
 
-            if "data" in response:
-                ids = {
-                    order["_id"]: order["market"]["code"]
-                    for order in response["data"]["orders"]["items"]
-                    if order["market"]["code"] == market.replace("/", "")
-                }
-                logging.info(f"OPEN ORDERS in {market}: {ids}")
-                return ids
-            return []
+    async def get_open_orders_by_market(self, market: str):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.get_open_orders_by_market(market=market, session=session)
+            logging.info(response)
+            return response
         except Exception as err:
             logging.debug(err)
             raise err
