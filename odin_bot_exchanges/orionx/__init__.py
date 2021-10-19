@@ -61,7 +61,7 @@ class OrionXExchange(ExchangeService):
     async def get_open_orders(self):
         try:
             async with aiohttp.ClientSession() as session:
-                response = await self.client.get_opern_orders(session=session)
+                response = await self.client.get_open_orders(session=session)
             logging.info(response)
             return response
         except Exception as err:
