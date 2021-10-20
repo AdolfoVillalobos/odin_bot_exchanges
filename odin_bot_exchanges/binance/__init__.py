@@ -62,7 +62,7 @@ class BinanceExchange(ExchangeService):
 
     async def new_position(self, params):
         # response = self.client.new_order(**params.dict())
-        response = self.client.new_position(**params.dict())
+        response = self.client.new_position(params)
         logging.info(response)
         return responses
 
