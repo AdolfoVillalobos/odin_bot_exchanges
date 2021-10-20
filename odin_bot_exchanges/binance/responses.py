@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 from typing import List
 
-import odin_bot_exchanges.orionx.currencies as currencies
+import odin_bot_exchanges.currencies as currencies
 
 from odin_bot_entities.trades import Transaction, Order
 from odin_bot_entities.balances import Wallet

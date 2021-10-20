@@ -1,10 +1,29 @@
+import aiohttp
+import time
+import asyncio
+import logging
+
+
+from typing import List
+from dataclasses import dataclass
+
+
+from odin_bot_entities.trades import Transaction
+from odin_bot_entities.balances import Wallet
+from odin_bot_exchanges.exchange import ExchangeService
+from odin_bot_exchanges.responses import AbstractResponseParser
+from odin_bot_exchanges.kraken.client import KrakenClient
+
+from odin_bot_exchanges.kraken.responses import KrakenWalletResponseParser, KrakenTransactionResponseParser, KrakenTickerResponseParser, KrakenTradeHistoryResponseParser
+
+
 @dataclass
 class KrakenExchange(ExchangeService):
     exchange: str = "kraken"
 
-    def __init__(self, credentials):
-        self.credentials = credentials
-        self.client = KrakenClient(credentials=credentials)
+    def __init__(self, api_key: str, secret_key: str, api_url: str):
+        self.client = KrakenClient(
+            api_key=api_key, api_url=api_url, secret_key=secret_key)
         self.wallet_parser: AbstractResponseParser = KrakenWalletResponseParser()
         self.transaction_parser: AbstractResponseParser = (
             KrakenTransactionResponseParser()
@@ -15,21 +34,20 @@ class KrakenExchange(ExchangeService):
         )
 
     async def get_transaction_response(
-        self, message: EntityMessage, session: aiohttp.ClientSession
+        self, trade_id: str, market_code: str, session: aiohttp.ClientSession
     ) -> Transaction:
         try:
             payload = {
                 "nonce": str(int(time.time() * 1000)),
-                "txid": message.id,
+                "txid": trade_id,
             }
 
             response = await self.client.request(
                 "POST", "/0/private/QueryOrders", session, payload
             )
 
-            transaction = self.transaction_parser.parse_response(
-                message=message, response=response
-            )
+            transaction = self.transaction_parser.parse_response(trade_id=trade_id, market_code=market_code, response=response
+                                                                 )
             return transaction
         except Exception as err:
             logging.debug(err)
@@ -96,23 +114,20 @@ class KrakenExchange(ExchangeService):
         return await super().get_order_response()
 
     async def get_ticker_price_response(
-        self, message: EntityMessage, session: aiohttp.ClientSession
+        self, market_code: str, session: aiohttp.ClientSession
     ) -> float:
         try:
             payload = {
-                "pair": message.market.replace("/", ""),
+                "pair": market_code.replace("/", ""),
             }
 
             response = await self.client.get_public(
                 "/0/public/Ticker", session, payload
             )
             ticker = self.ticker_parser.parse_response(
-                response=response, message=message
-            )
+                response=response, market_code=market_code)
+
             return ticker
         except Exception as err:
             logging.error(err)
             raise err
-
-
-@
