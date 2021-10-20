@@ -50,3 +50,10 @@ class BinanceClient:
     def avg_price(self, symbol: str):
         response = self.client.avg_price(symbol)
         return response
+
+    def new_position(self, params):
+        # response = self.client.new_order(**params.dict())
+        response = self.client.new_order(**params.dict())
+        logging.info(response)
+        entity_id = response.get("orderId", "test-id")
+        return entity_id
