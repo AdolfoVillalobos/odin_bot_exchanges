@@ -17,6 +17,14 @@ async def main():
 
     print(wallet)
 
+    p = await ox.get_symbol_price(symbol="BTCUSDT")
+
+    print(p)
+
+    info = await ox.get_exchange_info(symbol="BTCUSDT")
+
+    print(info)
+
 
 load_dotenv(".env")
 asyncio.run(main())

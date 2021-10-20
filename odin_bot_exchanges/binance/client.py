@@ -42,3 +42,11 @@ class BinanceClient:
     def get_wallet_response(self):
         response = self.client.account()
         return response
+
+    def exchange_info(self, symbol: str):
+        response = self.client.exchange_info(symbol)
+        return response
+
+    def avg_price(self, symbol: str):
+        response = self.client.avg_price(symbol)
+        return response
