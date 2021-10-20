@@ -38,7 +38,7 @@ class OrionXExchange(ExchangeService):
     async def get_transaction_from_order_response(self, order_id: str, market_code: str) -> Order:
         try:
             async with aiohttp.ClientSession() as session:
-                response = await self.client.get_order(order_id=order_id, market_code=market_code, session=session)
+                response = await self.client.get_order(order_id=order_id,  session=session)
                 order = self.transaction_from_order_parser.parse_response(
                     order_id=order_id,
                     market_code=market_code,
