@@ -9,7 +9,6 @@ from odin_bot_entities.balances import Wallet
 from odin_bot_exchanges.binance.client import BinanceClient
 from odin_bot_exchanges.binance.responses import BinanceWalletResponseParser, BinanceTransactionResponseParser
 from odin_bot_exchanges.exchange import ExchangeService
-from odin_bot_exchanges.orionx import responses
 
 
 class ExchangeInfo(NamedTuple):
@@ -64,7 +63,7 @@ class BinanceExchange(ExchangeService):
         # response = self.client.new_order(**params.dict())
         response = self.client.new_position(params)
         logging.info(response)
-        return responses
+        return response
 
     async def get_symbol_price(self, symbol: str):
         response = self.client.avg_price(symbol)
