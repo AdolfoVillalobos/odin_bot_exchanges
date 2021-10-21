@@ -65,6 +65,7 @@ class OrionXOrderResponseParser(AbstractResponseParser):
 
 class OrionXTransactionFromOrderResponseParser(AbstractResponseParser):
     def parse_response(self, response: dict) -> Order:
+        logging.info(response)
         if response["data"]["order"] == None:
             raise Exception("OrionX Parser: No Order data received.")
         if "errors" in response:
