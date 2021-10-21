@@ -8,7 +8,7 @@ from typing import List
 
 import odin_bot_exchanges.currencies as currencies
 
-from odin_bot_entities.trades import Transaction
+from odin_bot_entities.trades import Transaction, LedgerTransaction
 from odin_bot_entities.balances import Wallet
 from odin_bot_exchanges.responses import AbstractResponseParser
 
@@ -126,3 +126,32 @@ class KrakenTickerResponseParser(AbstractResponseParser):
         except Exception as err:
             logging.debug(err)
             raise Exception("Kraken Parser: Could not parse bid price.")
+
+
+class KrakenLedgerTransactionResponseParser(AbstractResponseParser):
+    def parse_response(self, response: dict):
+        if len(response["error"]) != 0:
+            logging.error(response["error"])
+            raise Exception("Kraken Parser: Response had errors")
+        try:
+            transaction_data = []
+            for _, tx in response["result"]["ledger"].items():
+                data = {
+                    "id": tx["refid"],
+                    "time": tx["time"],
+                    "exchange": "kraken",
+                    "type": tx["type"],
+                    "fee": float(tx["fee"]),
+                    "subtype": tx["subtype"],
+                    "asset_class": tx["aclass"],
+                    "amount": float(tx["amount"]),
+                    "resulting_balance": float(tx["balance"]),
+                }
+                transaction_data.append(data)
+            transactions = pydantic.parse_obj_as(
+                List[LedgerTransaction], transaction_data)
+            return transactions
+
+        except Exception as err:
+            logging.debug(err)
+            raise Exception("Kraken Parser: Could not parse Trade History")

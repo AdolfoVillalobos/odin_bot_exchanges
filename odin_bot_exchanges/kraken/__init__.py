@@ -14,7 +14,7 @@ from odin_bot_exchanges.exchange import ExchangeService
 from odin_bot_exchanges.responses import AbstractResponseParser
 from odin_bot_exchanges.kraken.client import KrakenClient
 
-from odin_bot_exchanges.kraken.responses import KrakenWalletResponseParser, KrakenTransactionResponseParser, KrakenTickerResponseParser, KrakenTradeHistoryResponseParser
+from odin_bot_exchanges.kraken.responses import KrakenLedgerTransactionResponseParser, KrakenWalletResponseParser, KrakenTransactionResponseParser, KrakenTickerResponseParser, KrakenTradeHistoryResponseParser
 
 
 @dataclass
@@ -32,6 +32,7 @@ class KrakenExchange(ExchangeService):
         self.trade_history_parser: AbstractResponseParser = (
             KrakenTradeHistoryResponseParser()
         )
+        self.ledger_response_parser = KrakenLedgerTransactionResponseParser()
 
     async def get_transaction_response(
         self, trade_id: str, market_code: str, session: aiohttp.ClientSession
@@ -77,7 +78,7 @@ class KrakenExchange(ExchangeService):
             transactions = []
 
             while True:
-                logging.info(offset)
+                print(offset)
                 await asyncio.sleep(2)
                 payload = {
                     "nonce": str(int(time.time() * 1000)),
@@ -91,8 +92,8 @@ class KrakenExchange(ExchangeService):
                 )
 
                 if len(response["error"]) != 0:
-                    logging.debug(response)
-                    logging.info("Rate Limit Reached- Sleeping")
+                    print(response)
+                    print("Rate Limit Reached- Sleeping")
                     await asyncio.sleep(30)
                 else:
 
@@ -130,4 +131,49 @@ class KrakenExchange(ExchangeService):
             return ticker
         except Exception as err:
             logging.error(err)
+            raise err
+
+    async def get_ledger_history_response(
+        self, type: str, start: float, end: float, session: aiohttp.ClientSession
+    ) -> List[Transaction]:
+        try:
+
+            offset = 0
+            transactions = []
+
+            while True:
+                logging.info(offset)
+                await asyncio.sleep(2)
+                payload = {
+                    "nonce": str(int(time.time() * 1000)),
+                    "type": type,
+                    "start": str(int(start)),
+                    "end": str(int(end)),
+                    "ofs": offset,
+                }
+                response = await self.client.request(
+                    "POST", "/0/private/Ledgers", session, payload
+                )
+
+                if len(response["error"]) != 0:
+                    logging.debug(response)
+                    logging.info("Rate Limit Reached- Sleeping")
+                    await asyncio.sleep(30)
+                else:
+
+                    count = response["result"]["count"]
+
+                    ledgers = self.ledger_response_parser.parse_response(
+                        response=response
+                    )
+                    print(ledgers)
+                    transactions += ledgers
+                    if offset <= count:
+                        offset += 50
+                    else:
+                        break
+
+            return transactions
+        except Exception as err:
+            logging.debug(err)
             raise err
