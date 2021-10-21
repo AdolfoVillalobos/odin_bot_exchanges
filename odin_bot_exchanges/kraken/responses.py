@@ -144,6 +144,7 @@ class KrakenLedgerTransactionResponseParser(AbstractResponseParser):
                     "fee": float(tx["fee"]),
                     "subtype": tx["subtype"],
                     "asset_class": tx["aclass"],
+                    "asset": tx["asset"],
                     "amount": float(tx["amount"]),
                     "resulting_balance": float(tx["balance"]),
                 }
