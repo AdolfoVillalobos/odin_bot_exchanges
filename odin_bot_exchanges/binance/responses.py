@@ -60,7 +60,7 @@ class BinanceWalletResponseParser(AbstractResponseParser):
                 },
                 "sign": -1.0,
                 "time": time.time(),
-                "date": datetime.now(),
+                "date": datetime.utcnow(),
             }
 
             wallet = [Wallet.parse_obj(wallet_data)]
