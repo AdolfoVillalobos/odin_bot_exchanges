@@ -91,6 +91,7 @@ class OrionXExchange(ExchangeService):
             async with aiohttp.ClientSession() as session:
                 response = await self.client.close_orders_by_market(market=market, session=session)
             logging.info(response)
+            return response
         except Exception as err:
             logging.debug(err)
             raise err
@@ -100,12 +101,22 @@ class OrionXExchange(ExchangeService):
             async with aiohttp.ClientSession() as session:
                 response = await self.client.get_order_status(order_id=order_id, session=session)
             logging.info(response)
-        except Exception as err:
-            logging.debug(err)
-            raise err
+            return response
         except Exception as err:
             logging.debug(err)
             raise Exception("Could not get Order Status")
+
+    async def close_order_by_id(self, order_id: str):
+        try:
+            async with aiohttp.ClientSession() as session:
+                response = await self.client.close_order_by_id(order_id=order_id, session=session)
+            logging.info(response)
+
+            return response
+
+        except Exception as err:
+            logging.debug(err)
+            raise Exception(f"Could not get Cancel Order {order_id}")
 
     async def new_position(
         self,

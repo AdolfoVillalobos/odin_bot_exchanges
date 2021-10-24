@@ -1,7 +1,7 @@
 import os
 import asyncio
 import aiohttp
-from datetime import datetime
+from datetime import datetime, tzinfo
 from dotenv import load_dotenv
 
 from odin_bot_exchanges.kraken import KrakenExchange

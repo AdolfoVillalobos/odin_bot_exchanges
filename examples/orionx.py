@@ -18,6 +18,10 @@ async def main():
 
     print(wallet)
 
+    cancel = await ox.close_order_by_id(order_id="123")
+
+    print(cancel)
+
 
 load_dotenv(".env")
 asyncio.run(main())
