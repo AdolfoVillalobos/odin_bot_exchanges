@@ -223,7 +223,7 @@ pydantic = ">=1.8.2,<2.0.0"
 
 [[package]]
 name = "orionx-python-client"
-version = "0.2.8"
+version = "0.3.0"
 description = ""
 category = "main"
 optional = false
@@ -521,7 +521,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "65ee48dede0d8cb637e72fae200cd09c13abd4b0f58d567ad09b8a68d6cec52a"
+content-hash = "99d526faba3f8e1387259f0c1e4d903b034e85d2b593fe8d7ab76d4f20c1ef4b"
 
 [metadata.files]
 aiohttp = [
@@ -772,8 +772,8 @@ odin-bot-entities = [
     {file = "odin_bot_entities-0.1.8-py3-none-any.whl", hash = "sha256:fe011e2020c479dc35aa3861fe0d1ada8ea47bac343386106d6a898c937c4a4c"},
 ]
 orionx-python-client = [
-    {file = "orionx-python-client-0.2.8.tar.gz", hash = "sha256:973976319a9c46137512bace5471991167f75526a8656ed3c5372a80701934ee"},
-    {file = "orionx_python_client-0.2.8-py3-none-any.whl", hash = "sha256:548b7911ad99f4cc3557b0e3342cea29773381234e7dc2e4d2900e462e8ca381"},
+    {file = "orionx-python-client-0.3.0.tar.gz", hash = "sha256:e9bf442f98dd5e193bbed2751b91621df398171757358c421695281d1905a501"},
+    {file = "orionx_python_client-0.3.0-py3-none-any.whl", hash = "sha256:fc1a07b33ef50b29f3a5602ea972a697763c5e1567ffcf0957e4698ce97a63e7"},
 ]
 packaging = [
     {file = "packaging-21.0-py3-none-any.whl", hash = "sha256:c86254f9220d55e31cc94d69bade760f0847da8000def4dfe1c6b872fd14ff14"},

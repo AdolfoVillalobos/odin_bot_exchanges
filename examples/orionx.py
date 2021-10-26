@@ -30,6 +30,9 @@ async def main():
 
     print(open)
 
+    open = await ox.close_orders(order_ids=["123"])
+
+    print(open)
 
 load_dotenv(".env")
 asyncio.run(main())
