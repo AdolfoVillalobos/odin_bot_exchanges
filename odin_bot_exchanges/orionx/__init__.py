@@ -66,7 +66,7 @@ class OrionXExchange(ExchangeService):
             logging.debug(err)
             raise err
 
-    async def get_open_orders_by_market(self, market: str, selling: bool):
+    async def get_open_orders_by_market(self, market: str, selling: str):
         try:
             async with aiohttp.ClientSession() as session:
                 response = await self.client.get_open_orders_by_market(market=market, selling=selling, session=session)
@@ -86,10 +86,10 @@ class OrionXExchange(ExchangeService):
             logging.debug(err)
             raise err
 
-    async def close_orders_by_market(self, market: str):
+    async def close_orders_by_market(self, market: str, selling: str):
         try:
             async with aiohttp.ClientSession() as session:
-                response = await self.client.close_orders_by_market(market=market, session=session)
+                response = await self.client.close_orders_by_market(market=market, selling=selling, session=session)
             logging.info(response)
             return response
         except Exception as err:

@@ -22,7 +22,11 @@ async def main():
 
     # print(cancel)
 
-    open = await ox.get_open_orders_by_market(market="BTC/CLP", selling=True)
+    open = await ox.get_open_orders_by_market(market="BTC/CLP", selling="true")
+
+    print(open)
+
+    open = await ox.close_orders_by_market(market="BTC/CLP", selling="true")
 
     print(open)
 
