@@ -69,6 +69,7 @@ CEROS = {
     "TRX": 6,
     "DOT": 8,
     "CLP": 0,
+    "ADA": 6,
     "EOS": 4,
     "USD": 2,
     "EUR": 2,

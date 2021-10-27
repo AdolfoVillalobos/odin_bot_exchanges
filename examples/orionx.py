@@ -14,21 +14,21 @@ async def main():
     ox = OrionXExchange(
         api_key=api_key, secret_key=secret_key, api_url=api_url)
 
-    # wallet = await ox.get_wallet_response()
+    wallet = await ox.get_wallet_response()
 
-    # print(wallet)
+    print(wallet)
 
-    # cancel = await ox.close_order_by_id(order_id="123")
+    # # cancel = await ox.close_order_by_id(order_id="123")
 
-    # print(cancel)
+    # # print(cancel)
 
-    open = await ox.get_open_orders_by_market(market="BTC/CLP", selling="true")
+    # open = await ox.get_open_orders_by_market(market="BTC/CLP", selling="true")
 
-    print(open)
+    # print(open)
 
-    open = await ox.close_orders_by_market(market="BTC/CLP", selling="true")
+    # open = await ox.close_orders_by_market(market="BTC/CLP", selling="true")
 
-    print(open)
+    # print(open)
 
     open = await ox.close_orders(order_ids=["123"])
 

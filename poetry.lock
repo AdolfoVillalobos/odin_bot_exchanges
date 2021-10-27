@@ -212,7 +212,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "odin-bot-entities"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 category = "main"
 optional = false
@@ -323,7 +323,7 @@ test = ["flaky", "pretend", "pytest (>=3.0.1)"]
 
 [[package]]
 name = "pyparsing"
-version = "3.0.1"
+version = "3.0.2"
 description = "Python parsing module"
 category = "dev"
 optional = false
@@ -768,8 +768,8 @@ multidict = [
     {file = "multidict-5.2.0.tar.gz", hash = "sha256:0dd1c93edb444b33ba2274b66f63def8a327d607c6c790772f448a53b6ea59ce"},
 ]
 odin-bot-entities = [
-    {file = "odin-bot-entities-0.1.8.tar.gz", hash = "sha256:89ac7f79d3c3ff997095f13d3ea2d7d86914fe5e25d3783c12a9af227e39ed9f"},
-    {file = "odin_bot_entities-0.1.8-py3-none-any.whl", hash = "sha256:fe011e2020c479dc35aa3861fe0d1ada8ea47bac343386106d6a898c937c4a4c"},
+    {file = "odin-bot-entities-0.1.9.tar.gz", hash = "sha256:09ce62753506414d1e768526234ada56569798dafc6e1a0cf5c348326addf863"},
+    {file = "odin_bot_entities-0.1.9-py3-none-any.whl", hash = "sha256:a9514d981156a1b29b4218f0fcb73a75c00ae27ebd2bc7858bc3386406898d99"},
 ]
 orionx-python-client = [
     {file = "orionx-python-client-0.3.0.tar.gz", hash = "sha256:e9bf442f98dd5e193bbed2751b91621df398171757358c421695281d1905a501"},
@@ -850,8 +850,8 @@ pyopenssl = [
     {file = "pyOpenSSL-19.0.0.tar.gz", hash = "sha256:aeca66338f6de19d1aa46ed634c3b9ae519a64b458f8468aec688e7e3c20f200"},
 ]
 pyparsing = [
-    {file = "pyparsing-3.0.1-py3-none-any.whl", hash = "sha256:fd93fc45c47893c300bd98f5dd1b41c0e783eaeb727e7cea210dcc09d64ce7c3"},
-    {file = "pyparsing-3.0.1.tar.gz", hash = "sha256:84196357aa3566d64ad123d7a3c67b0e597a115c4934b097580e5ce220b91531"},
+    {file = "pyparsing-3.0.2-py3-none-any.whl", hash = "sha256:09fa60a2e3bc3c6a23c2ed23332199d0e57b2c676b9193750cfc22a4358b69c2"},
+    {file = "pyparsing-3.0.2.tar.gz", hash = "sha256:9366e57ad2d2faa8dd89775ef284ecae0fc4012c24717f3705613b262d712090"},
 ]
 pytest = [
     {file = "pytest-5.4.3-py3-none-any.whl", hash = "sha256:5c0db86b698e8f170ba4582a492248919255fcd4c79b1ee64ace34301fb589a1"},
