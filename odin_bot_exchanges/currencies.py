@@ -13,6 +13,7 @@ COINS = [
     "XLM",
     "EOS",
     "DOT",
+    "ADA"
 ]
 
 BALANCE_COINS = [*COINS, *STABLE_COINS, *CURRENCIES]
