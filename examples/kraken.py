@@ -19,12 +19,12 @@ async def main():
 
         wallet = await ox.get_wallet_response(session=session)
 
-        start = datetime(2021, 10, 1).timestamp()
-        end = datetime(2021, 10, 21).timestamp()
+        start = datetime(2021, 10, 11).timestamp()
+        end = datetime(2021, 10, 12).timestamp()
 
-        ledger = await ox.get_ledger_history_response(type="deposit", start=start, end=end, session=session)
+        ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
 
-        print(ledger)
+        print(ledger[0].asset)
 
 
 load_dotenv(".env")

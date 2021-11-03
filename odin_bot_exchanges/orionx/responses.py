@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import List
 
 
-import odin_bot_exchanges.currencies as currencies
+from orionx_python_client.currency import CEROS as ORIONX_CEROS
 
 from odin_bot_entities.trades import Order, Transaction
 from odin_bot_entities.balances import Wallet
@@ -15,7 +15,7 @@ from odin_bot_exchanges.responses import AbstractResponseParser
 
 
 class OrionXOrderResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict, order_id: str, market_code: str) -> Order:
+    def parse_response(self, response: dict, order_id: str, market_code: str, currency_ceros: dict = ORIONX_CEROS) -> Order:
         if response["data"]["order"] == None:
             raise Exception("OrionX Parser: No Order data received.")
         if "errors" in response:
@@ -33,11 +33,11 @@ class OrionXOrderResponseParser(AbstractResponseParser):
                     "time": data["date"] / 1000,
                     "type": data["type"],
                     "fee": data["commission"]
-                    / 10 ** currencies.CEROS[data["currency"]["code"]],
+                    / 10 ** currency_ceros[data["currency"]["code"]],
                     "currency_value": data["cost"]
-                    / 10 ** currencies.CEROS[data["pairCurrency"]["code"]],
+                    / 10 ** currency_ceros[data["pairCurrency"]["code"]],
                     "pair_currency_value": data["amount"]
-                    / 10 ** currencies.CEROS[data["currency"]["code"]],
+                    / 10 ** currency_ceros[data["currency"]["code"]],
                 }
                 for data in response["data"]["order"]["transactions"]
                 if data["type"] == "trade-in"
@@ -64,7 +64,7 @@ class OrionXOrderResponseParser(AbstractResponseParser):
 
 
 class OrionXTransactionFromOrderResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict) -> Order:
+    def parse_response(self, response: dict, currency_ceros: dict = ORIONX_CEROS) -> Order:
         logging.info(response)
         if response["data"]["order"] == None:
             raise Exception("OrionX Parser: No Order data received.")
@@ -83,11 +83,11 @@ class OrionXTransactionFromOrderResponseParser(AbstractResponseParser):
                     "time": data["date"] / 1000,
                     "type": data["type"],
                     "fee": data["commission"]
-                    / 10 ** currencies.CEROS[data["currency"]["code"]],
+                    / 10 ** currency_ceros[data["currency"]["code"]],
                     "currency_value": data["cost"]
-                    / 10 ** currencies.CEROS[data["pairCurrency"]["code"]],
+                    / 10 ** currency_ceros[data["pairCurrency"]["code"]],
                     "pair_currency_value": data["amount"]
-                    / 10 ** currencies.CEROS[data["currency"]["code"]],
+                    / 10 ** currency_ceros[data["currency"]["code"]],
                 }
                 for data in response["data"]["order"]["transactions"]
                 if data["type"] == "trade-in" or data["type"] == "trade-out"
@@ -104,7 +104,7 @@ class OrionXTransactionFromOrderResponseParser(AbstractResponseParser):
 
 
 class OrionXWalletResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict) -> List[Wallet]:
+    def parse_response(self, response: dict, currency_ceros: dict = ORIONX_CEROS) -> List[Wallet]:
         if response["data"]["me"] == None:
             raise Exception("OrionX Parser: No Order data received.")
         if "errors" in response:
@@ -119,18 +119,18 @@ class OrionXWalletResponseParser(AbstractResponseParser):
                 currency = wallet_data["currency"]["code"]
                 available_balance = round(
                     wallet_data["availableBalance"] /
-                    10 ** currencies.CEROS[currency],
-                    currencies.CEROS[currency],
+                    10 ** currency_ceros[currency],
+                    currency_ceros[currency],
                 )
                 balance = round(
-                    wallet_data["balance"] / 10 ** currencies.CEROS[currency],
-                    currencies.CEROS[currency],
+                    wallet_data["balance"] / 10 ** currency_ceros[currency],
+                    currency_ceros[currency],
                 )
                 if wallet_data["loanUsedAmount"]:
                     loan = round(
                         wallet_data["loanUsedAmount"]
-                        / 10 ** currencies.CEROS[currency],
-                        currencies.CEROS[currency],
+                        / 10 ** currency_ceros[currency],
+                        currency_ceros[currency],
                     )
                 else:
                     loan = 0
@@ -174,7 +174,7 @@ class OrionXWalletResponseParser(AbstractResponseParser):
 
 
 class OrionXTradeHistoryResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict) -> List[Transaction]:
+    def parse_response(self, response: dict, currency_ceros: dict = ORIONX_CEROS) -> List[Transaction]:
         if response["data"]["orders"] == None:
             raise Exception(
                 "OrionX Parser: No Trade History data received.")
@@ -197,11 +197,11 @@ class OrionXTradeHistoryResponseParser(AbstractResponseParser):
                         "exchange": "orionX",
                         "type": tx["type"],
                         "fee": tx["commission"]
-                        / 10 ** currencies.CEROS[tx["currency"]["code"]],
+                        / 10 ** currency_ceros[tx["currency"]["code"]],
                         "currency_value": tx["cost"]
-                        / 10 ** currencies.CEROS[tx["pairCurrency"]["code"]],
+                        / 10 ** currency_ceros[tx["pairCurrency"]["code"]],
                         "pair_currency_value": tx["amount"]
-                        / 10 ** currencies.CEROS[tx["currency"]["code"]],
+                        / 10 ** currency_ceros[tx["currency"]["code"]],
                         "taker": tx["adds"],
                         "order_id": tx["orderId"],
                     }

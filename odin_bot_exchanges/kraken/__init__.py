@@ -134,7 +134,7 @@ class KrakenExchange(ExchangeService):
             raise err
 
     async def get_ledger_history_response(
-        self, type: str, start: float, end: float, session: aiohttp.ClientSession
+        self, asset: str, type: str, start: float, end: float, session: aiohttp.ClientSession
     ) -> List[Transaction]:
         try:
 
@@ -143,9 +143,10 @@ class KrakenExchange(ExchangeService):
 
             while True:
                 logging.info(offset)
-                await asyncio.sleep(2)
+                await asyncio.sleep(3)
                 payload = {
                     "nonce": str(int(time.time() * 1000)),
+                    "asset": asset,
                     "type": type,
                     "start": str(int(start)),
                     "end": str(int(end)),
@@ -158,16 +159,20 @@ class KrakenExchange(ExchangeService):
                 if len(response["error"]) != 0:
                     logging.debug(response)
                     logging.info("Rate Limit Reached- Sleeping")
-                    await asyncio.sleep(30)
+                    await asyncio.sleep(60)
                 else:
 
                     count = response["result"]["count"]
+                    logging.info(f"Num Records: {count}")
 
                     ledgers = self.ledger_response_parser.parse_response(
                         response=response
                     )
                     print(ledgers)
+
                     transactions += ledgers
+                    if count == 0:
+                        break
                     if offset <= count:
                         offset += 50
                     else:

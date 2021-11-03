@@ -6,9 +6,9 @@ import time
 from datetime import datetime
 from typing import List
 
-import odin_bot_exchanges.currencies as currencies
+import odin_bot_exchanges.currency as balance_currency
 
-from odin_bot_entities.trades import Transaction, Order
+from odin_bot_entities.trades import Transaction
 from odin_bot_entities.balances import Wallet
 
 from odin_bot_exchanges.responses import AbstractResponseParser
@@ -46,7 +46,7 @@ class BinanceTransactionResponseParser(AbstractResponseParser):
 
 
 class BinanceWalletResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict) -> List[Wallet]:
+    def parse_response(self, response: dict, balance_coins: List[str] = balance_currency.BALANCE_COINS) -> List[Wallet]:
         try:
             wallet_data = {
                 "exchange": "binance",
@@ -56,7 +56,7 @@ class BinanceWalletResponseParser(AbstractResponseParser):
                         "amount": currency["free"],
                     }
                     for currency in response["balances"]
-                    if currency["asset"] in currencies.BALANCE_COINS
+                    if currency["asset"] in balance_coins
                 },
                 "sign": -1.0,
                 "time": time.time(),

@@ -6,7 +6,8 @@ import pydantic
 from datetime import datetime
 from typing import List
 
-import odin_bot_exchanges.currencies as currencies
+import odin_bot_exchanges.currency as balance_currency
+import odin_bot_exchanges.kraken.currency as kraken_currency
 
 from odin_bot_entities.trades import Transaction, LedgerTransaction
 from odin_bot_entities.balances import Wallet
@@ -14,7 +15,7 @@ from odin_bot_exchanges.responses import AbstractResponseParser
 
 
 class KrakenTransactionResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict, trade_id: str, market_code: str) -> Transaction:
+    def parse_response(self, response: dict, trade_id: str, market_code: str, rename_coin_map: dict = kraken_currency.KRAKEN_RENAME_COINS) -> Transaction:
         if len(response["error"]) != 0:
             logging.error(response["error"])
             raise Exception("Kraken Parser: Response had errors")
@@ -22,8 +23,8 @@ class KrakenTransactionResponseParser(AbstractResponseParser):
             raise Exception("Kraken Parser: Response had no data")
         try:
             currency_name, pair_currency_name = market_code.split("/")
-            currency_name = currencies.KRAKEN_RENAME_COINS[currency_name]
-            pair_currency_name = currencies.KRAKEN_RENAME_COINS[pair_currency_name]
+            currency_name = rename_coin_map.get(currency_name)
+            pair_currency_name = rename_coin_map.get(pair_currency_name)
             transaction = Transaction.parse_obj(
                 {
                     "id": trade_id,
@@ -46,14 +47,14 @@ class KrakenTransactionResponseParser(AbstractResponseParser):
 
 
 class KrakenTradeHistoryResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict):
+    def parse_response(self, response: dict, rename_market_map: dict = kraken_currency.KRAKEN_RENAME_PAIRS):
         if len(response["error"]) != 0:
             logging.error(response["error"])
             raise Exception("Kraken Parser: Response had errors")
         try:
             transaction_data = []
             for _, tx in response["result"]["trades"].items():
-                market = currencies.KRAKEN_RENAME_PAIRS[tx["pair"]]
+                market = rename_market_map.get(tx["pair"])
                 currency_name, pair_currency_name = market.split("/")
                 data = {
                     "id": tx["ordertxid"],
@@ -78,7 +79,7 @@ class KrakenTradeHistoryResponseParser(AbstractResponseParser):
 
 
 class KrakenWalletResponseParser(AbstractResponseParser):
-    def parse_response(self, response: dict) -> List[Wallet]:
+    def parse_response(self, response: dict, balance_coins: List[str] = balance_currency.BALANCE_COINS, rename_coin_map: dict = kraken_currency.KRAKEN_RENAME_COINS) -> List[Wallet]:
         if len(response["error"]) != 0:
             logging.error(response["error"])
             raise Exception("Kraken Parser: Response had errors")
@@ -87,12 +88,11 @@ class KrakenWalletResponseParser(AbstractResponseParser):
 
             for key, value in response["result"].items():
 
-                if key in currencies.KRAKEN_RENAME_COINS:
-                    currency_name = currencies.KRAKEN_RENAME_COINS[key]
+                if key in balance_coins:
+                    currency_name = rename_coin_map.get(key)
 
-                    if currency_name in currencies.BALANCE_COINS:
-                        num_ceros = currencies.CEROS[currency_name]
-                        amount = round(float(value), num_ceros)
+                    if currency_name in balance_coins:
+                        amount = round(float(value), 8)
 
                         coin = {"name": currency_name, "amount": amount}
                         coin_data[currency_name] = coin
