@@ -54,21 +54,26 @@ class KrakenTradeHistoryResponseParser(AbstractResponseParser):
         try:
             transaction_data = []
             for _, tx in response["result"]["trades"].items():
-                market = rename_market_map.get(tx["pair"])
-                currency_name, pair_currency_name = market.split("/")
-                data = {
-                    "id": tx["ordertxid"],
-                    "time": tx["time"],
-                    "exchange": "kraken",
-                    "type": tx["type"],
-                    "market": market,
-                    "fee": float(tx["fee"]),
-                    "currency_name": currency_name,
-                    "pair_currency_name": pair_currency_name,
-                    "currency_value": float(tx["vol"]),
-                    "pair_currency_value": float(tx["cost"]),
-                }
-                transaction_data.append(data)
+                logging.info(tx["pair"])
+                if tx["pair"] in rename_market_map.keys():
+                    market = rename_market_map[tx["pair"]]
+                    currency_name, pair_currency_name = market.split("/")
+                    data = {
+                        "id": tx["ordertxid"],
+                        "time": tx["time"],
+                        "exchange": "kraken",
+                        "type": tx["type"],
+                        "market": market,
+                        "fee": float(tx["fee"]),
+                        "currency_name": currency_name,
+                        "pair_currency_name": pair_currency_name,
+                        "currency_value": float(tx["vol"]),
+                        "pair_currency_value": float(tx["cost"]),
+                    }
+                    transaction_data.append(data)
+                else:
+                    logging.error(f"Pair {tx['pair']} not in dict")
+                    raise Exception
             transactions = pydantic.parse_obj_as(
                 List[Transaction], transaction_data)
             return transactions

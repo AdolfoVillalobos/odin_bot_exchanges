@@ -98,9 +98,12 @@ class KrakenExchange(ExchangeService):
                 else:
 
                     count = response["result"]["count"]
+                    logging.info(f"Number of Transactions: {count}")
                     transactions += self.trade_history_parser.parse_response(
                         response=response
                     )
+                    if count == 0:
+                        break
                     if offset <= count:
                         offset += 50
                     else:

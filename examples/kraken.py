@@ -1,10 +1,15 @@
 import os
 import asyncio
 import aiohttp
-from datetime import datetime, tzinfo
+import logging
+
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 from odin_bot_exchanges.kraken import KrakenExchange
+
+logging.basicConfig(level=logging.DEBUG,
+                    format="%(levelname)s:%(asctime)s:%(message)s")
 
 
 async def main():
@@ -17,14 +22,17 @@ async def main():
 
     async with aiohttp.ClientSession() as session:
 
-        wallet = await ox.get_wallet_response(session=session)
+        # wallet = await ox.get_wallet_response(session=session)
 
-        start = datetime(2021, 10, 11).timestamp()
-        end = datetime(2021, 10, 12).timestamp()
+        start = datetime(2021, 10, 27, tzinfo=timezone.utc).timestamp()
+        end = datetime(2021, 11, 2, tzinfo=timezone.utc).timestamp()
 
-        ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
+        # ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
 
-        print(ledger[0].asset)
+        # print(ledger[0].asset)
+
+        trades = await ox.get_trades_history_response(start=start, end=end, session=session)
+        # print(trades)
 
 
 load_dotenv(".env")
