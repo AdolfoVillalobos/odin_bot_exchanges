@@ -34,7 +34,7 @@ class BinanceTransactionResponseParser(AbstractResponseParser):
                     "currency_name": currency_name,
                     "pair_currency_name": pair_currency_name,
                     "market": market_code,
-                    "time": currency["time"],
+                    "time": currency["time"]/1000,
                     "exchange": "binance",
                     "type": order_type,
                     "fee": currency["commission"],
