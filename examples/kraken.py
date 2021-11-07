@@ -20,19 +20,17 @@ async def main():
     ox = KrakenExchange(
         api_key=api_key, secret_key=secret_key, api_url=api_url)
 
-    async with aiohttp.ClientSession() as session:
+    # wallet = await ox.get_wallet_response(session=session)
 
-        # wallet = await ox.get_wallet_response(session=session)
+    start = datetime(2021, 10, 27, tzinfo=timezone.utc).timestamp()
+    end = datetime(2021, 11, 2, tzinfo=timezone.utc).timestamp()
 
-        start = datetime(2021, 10, 27, tzinfo=timezone.utc).timestamp()
-        end = datetime(2021, 11, 2, tzinfo=timezone.utc).timestamp()
+    # ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
 
-        # ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
+    # print(ledger[0].asset)
 
-        # print(ledger[0].asset)
-
-        trades = await ox.get_trades_history_response(start=start, end=end, session=session)
-        # print(trades)
+    trades = await ox.get_trades_history_response(start=start, end=end)
+    # print(trades)
 
 
 load_dotenv(".env")

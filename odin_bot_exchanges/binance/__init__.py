@@ -50,8 +50,9 @@ class BinanceExchange(ExchangeService):
     async def get_transaction_response(self, order_id: str, market_code: str) -> Order:
         response = self.client.get_transaction_response(
             order_id=order_id, market_code=market_code)
-        transaction: Transaction = self.order_parser.parse_response(
-            response=response)
+        transaction: Transaction = self.transaction_parser.parse_response(order_id=order_id,
+                                                                          market_code=market_code,
+                                                                          response=response)
         return transaction
 
     async def get_wallet_response(self) -> List[Wallet]:

@@ -246,7 +246,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "odin-bot-entities"
-version = "0.1.11"
+version = "0.1.14"
 description = ""
 category = "main"
 optional = false
@@ -916,8 +916,8 @@ multidict = [
     {file = "multidict-5.2.0.tar.gz", hash = "sha256:0dd1c93edb444b33ba2274b66f63def8a327d607c6c790772f448a53b6ea59ce"},
 ]
 odin-bot-entities = [
-    {file = "odin-bot-entities-0.1.11.tar.gz", hash = "sha256:f151234990f8fc0f3ab1ed32c24ba242db15199573b85a4f6ab77bf332197786"},
-    {file = "odin_bot_entities-0.1.11-py3-none-any.whl", hash = "sha256:fe3930fbc96dec636d7bfd6e67107964efd56794fc85c2bdd97744dd7aa1d625"},
+    {file = "odin-bot-entities-0.1.14.tar.gz", hash = "sha256:c1b3798818e8d1796d12fe6c81ed6b26eda14c2075348e17e015e62acc823d4f"},
+    {file = "odin_bot_entities-0.1.14-py3-none-any.whl", hash = "sha256:b944feab2631d91d7104f9671c6dd6231ef9b843c5009ddc9e80a1bc73767e77"},
 ]
 orionx-python-client = [
     {file = "orionx-python-client-0.3.2.tar.gz", hash = "sha256:6781d9a83af2160bbe351c7c7feab322a39ee65896555340e18efd34e4d80c7e"},

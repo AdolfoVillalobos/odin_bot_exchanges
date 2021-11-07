@@ -34,82 +34,80 @@ class KrakenExchange(ExchangeService):
         )
         self.ledger_response_parser = KrakenLedgerTransactionResponseParser()
 
-    async def get_transaction_response(
-        self, trade_id: str, market_code: str, session: aiohttp.ClientSession
-    ) -> Transaction:
+    async def get_transaction_response(self, trade_id: str, market_code: str) -> Transaction:
         try:
-            payload = {
-                "nonce": str(int(time.time() * 1000)),
-                "txid": trade_id,
-            }
+            async with aiohttp.ClientSession() as session:
+                payload = {
+                    "nonce": str(int(time.time() * 1000)),
+                    "txid": trade_id,
+                }
 
-            response = await self.client.request(
-                "POST", "/0/private/QueryOrders", session, payload
-            )
+                response = await self.client.request(
+                    "POST", "/0/private/QueryOrders", session, payload
+                )
 
-            transaction = self.transaction_parser.parse_response(trade_id=trade_id, market_code=market_code, response=response
-                                                                 )
-            return transaction
+                transaction = self.transaction_parser.parse_response(trade_id=trade_id, market_code=market_code, response=response
+                                                                     )
+                return transaction
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def get_wallet_response(self, session: aiohttp.ClientSession) -> List[Wallet]:
+    async def get_wallet_response(self) -> List[Wallet]:
         try:
-            payload = {
-                "nonce": str(int(time.time() * 1000)),
-            }
+            async with aiohttp.ClientSession() as session:
+                payload = {
+                    "nonce": str(int(time.time() * 1000)),
+                }
 
-            response = await self.client.request(
-                "POST", "/0/private/Balance", session, payload
-            )
-            balance = self.wallet_parser.parse_response(response=response)
-            return balance
+                response = await self.client.request(
+                    "POST", "/0/private/Balance", session, payload
+                )
+                balance = self.wallet_parser.parse_response(response=response)
+                return balance
         except Exception as err:
             logging.error(err)
             raise err
 
-    async def get_trades_history_response(
-        self, start: float, end: float, session: aiohttp.ClientSession
-    ) -> List[Transaction]:
+    async def get_trades_history_response(self, start: float, end: float) -> List[Transaction]:
         try:
+            async with aiohttp.ClientSession() as session:
+                offset = 0
+                transactions = []
 
-            offset = 0
-            transactions = []
-
-            while True:
-                print(offset)
-                await asyncio.sleep(2)
-                payload = {
-                    "nonce": str(int(time.time() * 1000)),
-                    "trades": True,
-                    "start": str(int(start)),
-                    "end": str(int(end)),
-                    "ofs": offset,
-                }
-                response = await self.client.request(
-                    "POST", "/0/private/TradesHistory", session, payload
-                )
-
-                if len(response["error"]) != 0:
-                    print(response)
-                    print("Rate Limit Reached- Sleeping")
-                    await asyncio.sleep(30)
-                else:
-
-                    count = response["result"]["count"]
-                    logging.info(f"Number of Transactions: {count}")
-                    transactions += self.trade_history_parser.parse_response(
-                        response=response
+                while True:
+                    print(offset)
+                    await asyncio.sleep(2)
+                    payload = {
+                        "nonce": str(int(time.time() * 1000)),
+                        "trades": True,
+                        "start": str(int(start)),
+                        "end": str(int(end)),
+                        "ofs": offset,
+                    }
+                    response = await self.client.request(
+                        "POST", "/0/private/TradesHistory", session, payload
                     )
-                    if count == 0:
-                        break
-                    if offset <= count:
-                        offset += 50
-                    else:
-                        break
 
-            return transactions
+                    if len(response["error"]) != 0:
+                        print(response)
+                        print("Rate Limit Reached- Sleeping")
+                        await asyncio.sleep(30)
+                    else:
+
+                        count = response["result"]["count"]
+                        logging.info(f"Number of Transactions: {count}")
+                        transactions += self.trade_history_parser.parse_response(
+                            response=response
+                        )
+                        if count == 0:
+                            break
+                        if offset <= count:
+                            offset += 50
+                        else:
+                            break
+
+                return transactions
         except Exception as err:
             logging.debug(err)
             raise err
@@ -117,71 +115,51 @@ class KrakenExchange(ExchangeService):
     async def get_order_response(self):
         return await super().get_order_response()
 
-    async def get_ticker_price_response(
-        self, market_code: str, session: aiohttp.ClientSession
-    ) -> float:
+    async def get_ledger_history_response(self, asset: str, type: str, start: float, end: float) -> List[Transaction]:
         try:
-            payload = {
-                "pair": market_code.replace("/", ""),
-            }
+            async with aiohttp.ClientSession() as session:
 
-            response = await self.client.get_public(
-                "/0/public/Ticker", session, payload
-            )
-            ticker = self.ticker_parser.parse_response(
-                response=response, market_code=market_code)
+                offset = 0
+                transactions = []
 
-            return ticker
-        except Exception as err:
-            logging.error(err)
-            raise err
-
-    async def get_ledger_history_response(
-        self, asset: str, type: str, start: float, end: float, session: aiohttp.ClientSession
-    ) -> List[Transaction]:
-        try:
-
-            offset = 0
-            transactions = []
-
-            while True:
-                logging.info(offset)
-                await asyncio.sleep(3)
-                payload = {
-                    "nonce": str(int(time.time() * 1000)),
-                    "asset": asset,
-                    "type": type,
-                    "start": str(int(start)),
-                    "end": str(int(end)),
-                    "ofs": offset,
-                }
-                response = await self.client.request(
-                    "POST", "/0/private/Ledgers", session, payload
-                )
-
-                if len(response["error"]) != 0:
-                    logging.debug(response)
-                    logging.info("Rate Limit Reached- Sleeping")
-                    await asyncio.sleep(60)
-                else:
-
-                    count = response["result"]["count"]
-                    logging.info(f"Num Records: {count}")
-
-                    ledgers = self.ledger_response_parser.parse_response(
-                        response=response
+                while True:
+                    logging.info(offset)
+                    await asyncio.sleep(3)
+                    payload = {
+                        "nonce": str(int(time.time() * 1000)),
+                        "asset": asset,
+                        "type": type,
+                        "start": str(int(start)),
+                        "end": str(int(end)),
+                        "ofs": offset,
+                    }
+                    response = await self.client.request(
+                        "POST", "/0/private/Ledgers", session, payload
                     )
-                    print(ledgers)
 
-                    transactions += ledgers
-                    if count == 0:
-                        break
-                    if offset <= count:
-                        offset += 50
+                    if len(response["error"]) != 0:
+                        logging.debug(response)
+                        logging.info("Rate Limit Reached- Sleeping")
+                        await asyncio.sleep(60)
                     else:
-                        break
 
-            return transactions
+                        count = response["result"]["count"]
+                        logging.info(f"Num Records: {count}")
+
+                        ledgers = self.ledger_response_parser.parse_response(
+                            response=response
+                        )
+                        print(ledgers)
+
+                        transactions += ledgers
+                        if count == 0:
+                            break
+                        if offset <= count:
+                            offset += 50
+                        else:
+                            break
+
+                return transactions
         except Exception as err:
             logging.debug(err)
             raise err

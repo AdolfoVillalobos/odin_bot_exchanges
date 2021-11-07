@@ -20,21 +20,30 @@ class BinanceTransactionResponseParser(AbstractResponseParser):
     ) -> List[Transaction]:
         try:
             currency_name, pair_currency_name = market_code.split("/")
-            transaction_data = [
-                {
-                    "id": order_id,
+
+            transaction_data = []
+
+            for currency in response:
+                if currency["isBuyer"] == True:
+                    order_type = "buyer"
+                elif currency["isBuyer"] == False:
+                    order_type = "seller"
+
+                data = {
+                    "id": currency["id"],
                     "currency_name": currency_name,
                     "pair_currency_name": pair_currency_name,
                     "market": market_code,
                     "time": currency["time"],
                     "exchange": "binance",
-                    "type": "b",
+                    "type": order_type,
                     "fee": currency["commission"],
                     "currency_value": currency["qty"],
                     "pair_currency_value": float(currency["price"]),
+                    "order_id": order_id
                 }
-                for currency in response
-            ]
+
+                transaction_data.append(data)
 
             transactions = pydantic.parse_obj_as(
                 List[Transaction], transaction_data)

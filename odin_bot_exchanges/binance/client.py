@@ -30,8 +30,9 @@ class BinanceClient:
 
     def get_transaction_response(self, order_id: str, market_code: str):
         try:
+            symbol = market_code.replace("/", "")
             response = self.client.my_trades(
-                symbol=market_code, orderId=int(order_id)
+                symbol=symbol, orderId=int(order_id)
             )
             logging.info(response)
             return response
