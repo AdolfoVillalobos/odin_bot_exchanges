@@ -1,7 +1,7 @@
 import logging
 import aiohttp
 
-
+from datetime import datetime
 from binance.spot import Spot
 from dataclasses import dataclass
 
@@ -34,6 +34,19 @@ class BinanceClient:
             response = self.client.my_trades(
                 symbol=symbol, orderId=int(order_id)
             )
+            logging.info(response)
+            return response
+        except Exception as err:
+            logging.debug(err)
+            raise err
+
+    def get_transaction_history_response(self, market_code: str, start_date: datetime, end_date: datetime):
+        try:
+            symbol = market_code.replace("/", "")
+            start_time = int(start_date.timestamp()*1000)
+            end_time = int(end_date.timestamp()*1000)
+            response = self.client.my_trades(
+                symbol=symbol, startTime=start_time, endTime=end_time)
             logging.info(response)
             return response
         except Exception as err:

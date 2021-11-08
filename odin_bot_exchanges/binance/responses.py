@@ -77,3 +77,40 @@ class BinanceWalletResponseParser(AbstractResponseParser):
         except Exception as err:
             logging.debug(err)
             raise Exception("Binance Parser: Could not parse Wallet")
+
+
+class BinanceTransactionHistoryResponseParser(AbstractResponseParser):
+    def parse_response(self, response: dict, market_code: str, **kwargs):
+
+        try:
+
+            currency_name, pair_currency_name = market_code.split("/")
+
+            transaction_data = []
+
+            for currency in response:
+                if currency["isBuyer"] == True:
+                    order_type = "buyer"
+                elif currency["isBuyer"] == False:
+                    order_type = "seller"
+
+                data = {
+                    "id": currency["id"],
+                    "currency_name": currency_name,
+                    "pair_currency_name": pair_currency_name,
+                    "market": market_code,
+                    "time": currency["time"]/1000,
+                    "exchange": "binance",
+                    "type": order_type,
+                    "fee": currency["commission"],
+                    "currency_value": currency["qty"],
+                    "pair_currency_value": float(currency["price"]),
+                }
+
+                transaction_data.append(data)
+            transactions = pydantic.parse_obj_as(
+                List[Transaction], transaction_data)
+            return transactions
+        except Exception as err:
+            logging.debug(err)
+            raise err
