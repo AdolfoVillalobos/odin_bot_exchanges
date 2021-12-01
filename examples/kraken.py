@@ -22,14 +22,14 @@ async def main():
 
     # wallet = await ox.get_wallet_response(session=session)
 
-    start = datetime(2021, 10, 27, tzinfo=timezone.utc).timestamp()
-    end = datetime(2021, 11, 2, tzinfo=timezone.utc).timestamp()
+    start = datetime(2021, 11, 9, tzinfo=timezone.utc).timestamp()
+    end = datetime(2021, 11, 10, tzinfo=timezone.utc).timestamp()
 
-    # ledger = await ox.get_ledger_history_response(asset="XXBT", type="trade", start=start, end=end, session=session)
+    ledger = await ox.get_ledger_history_response(asset="all", type="all", start=start, end=end)
 
     # print(ledger[0].asset)
 
-    trades = await ox.get_trades_history_response(start=start, end=end)
+    # trades = await ox.get_trades_history_response(start=start, end=end)
     # print(trades)
 
 

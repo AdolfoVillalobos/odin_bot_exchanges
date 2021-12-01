@@ -105,6 +105,7 @@ class OrionXTransactionFromOrderResponseParser(AbstractResponseParser):
 
 class OrionXWalletResponseParser(AbstractResponseParser):
     def parse_response(self, response: dict, currency_ceros: dict = ORIONX_CEROS) -> List[Wallet]:
+        print(currency_ceros)
         if response["data"]["me"] == None:
             raise Exception("OrionX Parser: No Order data received.")
         if "errors" in response:

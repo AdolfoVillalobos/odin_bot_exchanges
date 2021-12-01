@@ -6,6 +6,7 @@ from typing import List
 from orionx_python_client import OrionXClient
 from odin_bot_entities.trades import Order
 from odin_bot_exchanges.exchange import ExchangeService
+from orionx_python_client.currency import CEROS as ORIONX_CEROS
 from .responses import OrionXOrderResponseParser, OrionXTradeHistoryResponseParser, OrionXWalletResponseParser, OrionXTransactionFromOrderResponseParser
 
 
@@ -46,11 +47,12 @@ class OrionXExchange(ExchangeService):
             logging.debug(err)
             raise err
 
-    async def get_wallet_response(self):
+    async def get_wallet_response(self, currency_ceros: dict = ORIONX_CEROS):
         try:
             async with aiohttp.ClientSession() as session:
                 response = await self.client.get_balance(session=session)
-                wallet = self.wallet_parser.parse_response(response=response)
+                wallet = self.wallet_parser.parse_response(
+                    response=response, currency_ceros=currency_ceros)
             return wallet
         except Exception as err:
             logging.error(err)

@@ -14,7 +14,30 @@ async def main():
     ox = OrionXExchange(
         api_key=api_key, secret_key=secret_key, api_url=api_url)
 
-    wallet = await ox.get_wallet_response()
+    CEROS = {
+        "USDT": 8,
+        "BTC": 8,
+        "DAI": 8,
+        "ETH": 8,
+        "BNB": 8,
+        "LTC": 8,
+        "BCH": 8,
+        "CHA": 8,
+        "LUK": 8,
+        "DASH": 8,
+        "XLM": 7,
+        "XRP": 6,
+        "TRX": 6,
+        "DOT": 8,
+        "ADA": 6,
+        "CLP": 0,
+        "EOS": 4,
+        "USD": 2,
+        "EUR": 2,
+        "SOL": 8
+    }
+
+    wallet = await ox.get_wallet_response(currency_ceros=CEROS)
 
     print(wallet)
 
