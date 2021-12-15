@@ -9,7 +9,6 @@ class ExchangeService(ABC):
     exchange: str
     wallet_parser: AbstractResponseParser = field(init=False)
     transaction_parser: AbstractResponseParser = field(init=False)
-    order_parser: AbstractResponseParser = field(init=False)
 
     # @abstractmethod
     # async def get_transaction_response(self):

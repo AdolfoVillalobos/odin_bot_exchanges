@@ -4,7 +4,7 @@ import asyncio
 import logging
 
 
-from typing import List
+from typing import List, Dict
 from dataclasses import dataclass
 
 
@@ -12,6 +12,7 @@ from odin_bot_entities.trades import Transaction
 from odin_bot_entities.balances import Wallet
 from odin_bot_exchanges.exchange import ExchangeService
 from odin_bot_exchanges.responses import AbstractResponseParser
+import odin_bot_exchanges.kraken.currency as kraken_currency
 from odin_bot_exchanges.kraken.client import KrakenClient
 
 from odin_bot_exchanges.kraken.responses import KrakenLedgerTransactionResponseParser, KrakenWalletResponseParser, KrakenTransactionResponseParser, KrakenTickerResponseParser, KrakenTradeHistoryResponseParser
@@ -69,7 +70,7 @@ class KrakenExchange(ExchangeService):
             logging.error(err)
             raise err
 
-    async def get_trades_history_response(self, start: float, end: float) -> List[Transaction]:
+    async def get_trades_history_response(self, start: float, end: float, rename_market_map: Dict = kraken_currency.KRAKEN_RENAME_PAIRS) -> List[Transaction]:
         try:
             async with aiohttp.ClientSession() as session:
                 offset = 0
@@ -98,7 +99,7 @@ class KrakenExchange(ExchangeService):
                         count = response["result"]["count"]
                         logging.info(f"Number of Transactions: {count}")
                         transactions += self.trade_history_parser.parse_response(
-                            response=response
+                            response=response, rename_market_map=rename_market_map
                         )
                         if count == 0:
                             break

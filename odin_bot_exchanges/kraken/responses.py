@@ -52,6 +52,7 @@ class KrakenTradeHistoryResponseParser(AbstractResponseParser):
             logging.error(response["error"])
             raise Exception("Kraken Parser: Response had errors")
         try:
+            logging.info(rename_market_map)
             transaction_data = []
             for _, tx in response["result"]["trades"].items():
                 logging.info(tx["pair"])

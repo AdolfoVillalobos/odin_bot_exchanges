@@ -1,4 +1,4 @@
-import aiohttp
+import math
 import logging
 from typing import List, NamedTuple
 
@@ -18,12 +18,8 @@ class ExchangeInfo(NamedTuple):
     step_size: float
 
     def get_amount(self, quantity: float):
-        new_quantity = quantity
-        if self.step_size > 0:
-            if not (new_quantity - self.min_lot_size) % self.step_size == 0:
-
-                new_quantity = new_quantity - new_quantity % self.step_size
-        new_quantity = round(new_quantity, self.precision)
+        step_precision = int(round(-math.log(self.step_size, 10), 0))
+        new_quantity = float(round(quantity, step_precision))
         return new_quantity
 
     def filter_lot_size(self, quantity: float):
@@ -41,12 +37,12 @@ class BinanceExchange(ExchangeService):
         self.wallet_parser = BinanceWalletResponseParser()
         self.transaction_parser = BinanceTransactionResponseParser()
         self.transaction_history_parser = BinanceTransactionHistoryResponseParser()
-
-    async def get_order_response(self, order_id: str, market_code: str) -> Order:
-        response = self.client.get_order_response(
-            order_id=order_id, market_code=market_code)
-        order: Order = self.order_parser.parse_response(response=response)
-        return order
+        self.order_parser = None
+    # async def get_order_response(self, order_id: str, market_code: str) -> Order:
+    #     response = self.client.get_order_response(
+    #         order_id=order_id, market_code=market_code)
+    #     order: Order = self.order_parser.parse_response(response=response)
+    #     return order
 
     async def get_transaction_response(self, order_id: str, market_code: str) -> Order:
         response = self.client.get_transaction_response(

@@ -22,12 +22,18 @@ KRAKEN_RENAME_COINS = {
     "PAXG": "PAX",
     "DOT": "DOT",
     "USDC": "USDC",
+    "MATIC": "MATIC",
+    "DOT": "DOT",
+    "SOL": "SOL",
+    "ADA": "ADA"
 }
 
 
 KRAKEN_RENAME_PAIRS = {
     "EOSUSDT": "EOS/USDT",
+    "EOSZUSD": "EOS/USD",
     "XRPUSDT": "XRP/USDT",
+    "XXRPZUSD": "XRP/USD",
     "XBTUSDT": "BTC/USDT",
     "XXBTUSDT": "BTC/USDT",
     "ZUSDZCAD": "USD/CAD",
@@ -47,7 +53,6 @@ KRAKEN_RENAME_PAIRS = {
     "USDCUSDT": "USDC/USDT",
     "XXLMZUSD": "XLM/USD",
     "TRXUSD": "TRX/USD",
-    "XXRPZUSD": "XRP/USD",
     "XLTCZUSD": "LTC/USD",
     "DASHUSD": "DASH/USD",
     "XETHZUSD": "ETH/USD",
@@ -67,6 +72,8 @@ KRAKEN_RENAME_PAIRS = {
     "USDTEUR": "USDT/EUR",
     "XXBTZEUR": "BTC/EUR",
     "USDTCAD": "USDT/CAD",
+    "MATICUSD": "MATIC/USD",
+    "MATICUSDT": "MATIC/USDT"
 }
 
 

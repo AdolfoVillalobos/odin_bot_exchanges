@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "odin-bot-exchanges"
-version = "0.5.13"
+version = "0.6.3"
 description = ""
 authors = ["adolfrodeno <amvillalobos@uc.cl>"]
 
