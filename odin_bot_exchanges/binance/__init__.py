@@ -67,7 +67,6 @@ class BinanceExchange(ExchangeService):
     async def new_position(self, params):
         # response = self.client.new_order(**params.dict())
         response = self.client.new_position(params)
-        logging.info(response)
         return response
 
     async def get_symbol_price(self, symbol: str):

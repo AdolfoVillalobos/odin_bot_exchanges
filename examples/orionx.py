@@ -1,6 +1,6 @@
+import logging
 import os
 import asyncio
-import aiohttp
 from dotenv import load_dotenv
 
 from odin_bot_exchanges.orionx import OrionXExchange
@@ -34,28 +34,27 @@ async def main():
         "EOS": 4,
         "USD": 2,
         "EUR": 2,
-        "SOL": 8
+        "SOL": 8,
+        "MATIC": 8,
     }
 
-    wallet = await ox.get_wallet_response(currency_ceros=CEROS)
+    wallet = ox.get_wallet_response(currency_ceros=CEROS)
 
     print(wallet)
 
-    # # cancel = await ox.close_order_by_id(order_id="123")
-
-    # # print(cancel)
-
-    # open = await ox.get_open_orders_by_market(market="BTC/CLP", selling="true")
-
-    # print(open)
-
-    # open = await ox.close_orders_by_market(market="BTC/CLP", selling="true")
-
-    # print(open)
-
-    open = await ox.close_orders(order_ids=["123"])
+    open = ox.close_orders(order_ids=["123"])
 
     print(open)
+
+    o1 = ox.new_position(market_code="BTC/USDT", amount=0.0006,
+                         limit_price=60000, selling="true")
+
+    print(o1)
+
+    o2 = ox.new_position(market_code="BTC/CLP", amount=0.0006,
+                         limit_price=60000000, selling="true")
+
+    print(o2)
 
 load_dotenv(".env")
 asyncio.run(main())

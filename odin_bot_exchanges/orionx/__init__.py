@@ -1,5 +1,4 @@
 
-import aiohttp
 import logging
 from typing import List
 
@@ -21,97 +20,103 @@ class OrionXExchange(ExchangeService):
         self.trade_history_parser = OrionXTradeHistoryResponseParser()
         self.transaction_from_order_parser = OrionXTransactionFromOrderResponseParser()
 
-    async def get_order_response(
+    def get_order_response(
         self, order_id: str, market_code: str
     ):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_order(order_id=order_id, session=session)
-                order = self.order_parser.parse_response(
-                    order_id=order_id,
-                    market_code=market_code,
-                    response=response)
+
+            response = self.client.get_order(
+                order_id=order_id)
+            order = self.order_parser.parse_response(
+                order_id=order_id,
+                market_code=market_code,
+                response=response)
             return order
         except Exception as err:
             logging.error(err)
             return None
 
-    async def get_transaction_from_order_response(self, order_id: str) -> Order:
+    def get_transaction_from_order_response(self, order_id: str) -> Order:
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_order(order_id=order_id,  session=session)
-                order = self.transaction_from_order_parser.parse_response(
-                    response=response)
+
+            response = self.client.get_order(
+                order_id=order_id)
+            order = self.transaction_from_order_parser.parse_response(
+                response=response)
             return order
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def get_wallet_response(self, currency_ceros: dict = ORIONX_CEROS):
+    def get_wallet_response(self, currency_ceros: dict = ORIONX_CEROS):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_balance(session=session)
-                wallet = self.wallet_parser.parse_response(
-                    response=response, currency_ceros=currency_ceros)
+
+            response = self.client.get_balance()
+            wallet = self.wallet_parser.parse_response(
+                response=response, currency_ceros=currency_ceros)
             return wallet
         except Exception as err:
             logging.error(err)
             return None
 
-    async def get_open_orders(self):
+    def get_open_orders(self):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_open_orders(session=session)
+
+            response = self.client.get_open_orders()
             logging.info(response)
             return response
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def get_open_orders_by_market(self, market: str, selling: str):
+    def get_open_orders_by_market(self, market: str, selling: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_open_orders_by_market(market=market, selling=selling, session=session)
+
+            response = self.client.get_open_orders_by_market(
+                market=market, selling=selling)
             logging.info(response)
             return response
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def close_orders(self, order_ids: List[str]):
+    def close_orders(self, order_ids: List[str]):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.close_orders(order_ids=order_ids, session=session)
+
+            response = self.client.close_orders(
+                order_ids=order_ids)
             logging.info(response)
             return response
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def close_orders_by_market(self, market: str, selling: str):
+    def close_orders_by_market(self, market: str, selling: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.close_orders_by_market(market=market, selling=selling, session=session)
+
+            response = self.client.close_orders_by_market(
+                market=market, selling=selling)
             logging.info(response)
             return response
         except Exception as err:
             logging.debug(err)
             raise err
 
-    async def get_order_status(self, order_id: str):
+    def get_order_status(self, order_id: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.get_order_status(order_id=order_id, session=session)
+
+            response = self.client.get_order_status(
+                order_id=order_id)
             logging.info(response)
             return response
         except Exception as err:
             logging.debug(err)
             raise Exception("Could not get Order Status")
 
-    async def close_order_by_id(self, order_id: str):
+    def close_order_by_id(self, order_id: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.close_order_by_id(order_id=order_id, session=session)
+
+            response = self.client.close_order_by_id(order_id=order_id)
             logging.info(response)
 
             return response
@@ -120,7 +125,7 @@ class OrionXExchange(ExchangeService):
             logging.debug(err)
             raise Exception(f"Could not get Cancel Order {order_id}")
 
-    async def new_position(
+    def new_position(
         self,
         market_code: str,
         amount: float,
@@ -128,10 +133,11 @@ class OrionXExchange(ExchangeService):
         selling: str,
     ):
         try:
-            async with aiohttp.ClientSession() as session:
-                response = await self.client.new_position(market_code=market_code, amount=amount, limit_price=limit_price, selling=selling, session=session)
-                logging.info(response)
+
+            response = self.client.new_position(
+                market_code=market_code, amount=amount, limit_price=limit_price, selling=selling)
+            logging.info(response)
             return response
         except Exception as err:
-            logging.debug(err)
-            return False
+            logging.error(err)
+            raise False

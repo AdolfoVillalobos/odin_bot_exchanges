@@ -70,5 +70,5 @@ class BinanceClient:
         response = self.client.new_order(**params.dict())
         logging.info(response)
         entity_id = response.get("orderId", "test-id")
-        logging.info(f"Order id {entity_id}")
-        return entity_id
+        logging.info(f"Order id: {entity_id}")
+        return response
